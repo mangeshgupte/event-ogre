@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block extra_head %} 
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/style.css" />
+{% endblock %}
+
+{% block content %}
+<div align="center">
+  
+  <table border=0>
+    <tr> 
+      <td> <fb:profile-pic uid='{{user.fbid}}' /></td>
+      <td> <h1> Welcome {{user.user}} !
+      <fb:name firstnameonly='true' uid='{{user.fbid}}' useyou='false'/> </h1> </td>
+    </tr>
+  </table>
+  <br/> <br/> 
+  
+  <table class="box-table" width="700" align="center">
+    <tr> <th colspan=2 3 > <br/>  <h3 align="center"> Activities you are planning  </h3> <br/> </th> </tr>
+    <tr> <th>Name</th> <th>Description</th> </tr>
+    {% for brew in brew_masterlist %}
+    <tr>
+      <td> <a href="/events/brew/{{brew.pk}}"> {{ brew.name}} </a> </td>
+      <td> {{ brew.description}} </td>
+    </tr>
+    {% endfor %}
+
+    <form action="{{save_brew}}" method="POST">
+      {% csrf_token %}
+      <tr>
+	<td> <input type="text" name="brew_name">  </td>
+	<td> <textarea rows="2" cols="50" name="brew_description"></textarea> </td>
+      </tr>
+      <tr> <td>
+	<input type="submit" id="add_brew" value="Start a New Brew"/>	    
+      </td> </tr>
+    </form>
+    
+  </table>
+  
+  <br/> <br/>
+  
+  
+  <table class="box-table" width="700" align="center">
+    <tr> <th colspan=3> <br/>  <h3 align="center"> Activities you are
+    participating in ! </h3> <br/> </th> </tr>
+    <tr>
+      <th>Event Maker </th>
+      <th>Activity Name</th>
+      <th>Activity Description</th>
+    </tr>
+    
+    {% for brew in brew_guestlist %}  
+    <tr>
+      <td> {{brew.brewmaster.name}}<fb:profile-pic uid={{brew.brewmaster}} /> </td>
+      <td> <a href="/events/brew/{{brew.pk}}"> {{brew.name}} </a> </td>
+      <td> {{brew.description}} </td>
+      <input type="hidden" name="brew_id" value="{{ brew.pk }}" />
+    </tr>
+    {% endfor %}
+  </table>
+  
+  
+  <table class="box-table" width="700" align="center">
+    <tr> <th colspan=5> <br/>  <h3 align="center"> Join These Activities ! </h3> <br/> </th> </tr>
+    <tr>
+      <th>Event Maker </th>
+      <th>Activity Name</th>
+      <th>Activity Description</th>
+      <th> </th>
+      <th> </th>
+    </tr>
+    
+    {% for brew in brew_inviteelist %}  
+    <tr>
+      <form action="{{join_brew}}" method="POST">
+	{% csrf_token %}
+	<td> {{brew.brewmaster.name}}<fb:profile-pic uid={{brew.brewmaster}} /> </td>
+	<td> <a href="/events/brew/{{brew.pk}}"> {{brew.name}} </a> </td>
+	<td> {{brew.description}} </td>
+	<td> <input type="submit" name="join_brew_yes" value="Join the brewmaking"/> </td>
+	<td> <input type="submit" name="join_brew_no" value="Ignore this"/> </td>
+	<input type="hidden" name="brew_id" value="{{ brew.pk }}" />
+      </tr>
+    </form>
+    {% endfor %}
+  </table>
+</div>
+
+{% endblock %}  

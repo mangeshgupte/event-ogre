@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action="" method="post">
+  {% csrf_token %}
+  <table>
+  {% for field in edit_form %}
+  <tr>
+    <td> {{ field.label_tag }}: {{ field.errors }}</td> <td>{{ field }} </td>
+    
+  </tr>
+  {% endfor %}
+  </table>
+  <input type="submit" name="edit profile" value="Save Profile" />
+</form>
+
+
+{% endblock %}

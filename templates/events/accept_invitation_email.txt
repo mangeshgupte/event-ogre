@@ -1,0 +1,11 @@
+Hi,
+
+I have started a new activity on {{site}}.
+
+Here is a brief description:
+{{ brew_name }} : {{ brew_name }}
+
+Come on {{site}} to have a look and join me in this.
+
+Cheers,
+{{ brewmaster }} 

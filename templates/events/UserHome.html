@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block extra_head %} 
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css" />
+{% endblock %}
+
+{% block content %}
+
+  <br/> <br/>   <br/> 
+  
+  <div class="span-18 last">
+    <div class="span-4">  {{user.picture}} </div>
+    <div class="span-14 last">   <h2> Welcome {{user}} ! </h2> </div>
+  </div>
+  
+  <br/> <br/>   <br/> <br/>   <br/> <br/>
+  
+  <table class="box-table" align="center">
+    <tr> <th colspan="2"> <br/>  
+    <h3 align="center"> Activities you are planning  </h3> <br/> </th> </tr>
+    <tr> <th>Name</th> <th>Description</th> </tr>
+    {% for event in host_list %}
+    <form action="process_event/{{event.pk}}" method="POST">
+      {% csrf_token %}
+      <tr>
+        <td> <a href="/events/{{event.pk}}"> {{ event.name }} </a> </td>
+        <td> <div style="float:left">	  {{ event.description}}  </div>
+	    <div style="float:right">  <input type="submit" value="Delete"/>  </div>
+        </td>
+      </tr>
+    </form>
+    {% endfor %}
+  </table>
+  
+  <form action="save_event" method="POST">
+    {% csrf_token %}
+    <div class="span-5 append-2"> 
+      <input type="text" name="event_name" >  </td>
+    </div>
+    <div class="span-9"> 
+      <textarea name="event_description"></textarea> </td>
+    </div> 
+    <hr/>
+    <div class="span-4">
+      <button type="submit" class="button positive" id="add_event">
+        <img src="{{STATIC_URL}}css/blueprint/plugins/buttons/icons/tick.png" alt=""/> Start an Activity
+      </button>
+    </div>
+    <!-- <input type="submit" id="add_event" value="Start a New Event"/>	     -->
+  </form>
+  
+  
+  <br/> <br/>   <br/> <br/>   <br/> <br/>
+
+  <table class="box-table"  align="center">
+    <tr> <th colspan=3> <br/>  
+    <h3 align="center"> Activities you are participating in ! </h3> <br/> </th> </tr>
+    <tr>
+      <th>Event Maker </th>
+      <th>Activity Name</th>
+      <th>Activity Description</th>
+    </tr>
+    
+    {% for event in event_guestlist %}  
+    <tr>
+      <td> {{event.host.name}}<fb:profile-pic uid={{event.host}} /> </td>
+      <td> <a href="/events/{{event.pk}}"> {{event.name}} </a> </td>
+      <td> {{event.description}} </td>
+      <input type="hidden" name="eid" value="{{ event.pk }}" />
+    </tr>
+    {% endfor %}
+  </table>
+  
+  <br/> <br/>   <br/> <br/>   <br/> <br/>
+  
+  <table class="box-table" width="700" align="center">
+    <tr> <th colspan=5> <br/>  <h3 align="center"> Join These Activities ! </h3> <br/> </th> </tr>
+    <tr>
+      <th>Event Maker </th>
+      <th>Activity Name</th>
+      <th>Activity Description</th>
+      <th> </th>
+      <th> </th>
+    </tr>
+    
+    {% for event in invitee_list %}  
+    <tr>
+      <form action="{{join_event}}" method="POST">
+	{% csrf_token %}
+	<td> {{event.host.name}} <fb:profile-pic uid={{event.host}} /> </td>
+	<td> <a href="/events/{{event.pk}}"> {{event.name}} </a> </td>
+	<td> {{event.description}} </td>
+	<td> <input type="submit" name="join_brew_yes" value="Join the brewmaking"/> </td>
+	<td> 
+	  <!-- <input type="submit" name="join_brew_no" value="Ignore this"/>  -->
+	
+	<button type="submit" class="button negative" id="join_brew_no">
+	  <img src="{{STATIC_URL}}css/blueprint/plugins/buttons/icons/cross.png" alt=""/> Ignore Event
+	</button> </td>
+
+	<input type="hidden" name="eid" value="{{ event.pk }}" />
+      </tr>
+    </form>
+    {% endfor %}
+  </table>
+
+{% endblock %}  

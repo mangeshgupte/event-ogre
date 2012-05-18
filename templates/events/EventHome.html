@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block extra_head %} 
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css" />
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.5.2.min.js"></script>
+
+<link type="text/css" href="{{ STATIC_URL }}css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="Stylesheet" />	
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.11.custom.min.js"></script>
+
+
+<style>
+  .ui-autocomplete {
+     max-height: 100px;
+     overflow-y: auto;
+     /* prevent horizontal scrollbar */
+     overflow-x: hidden;
+     /* add padding to account for vertical scrollbar */
+     padding-right: 20px;
+  }
+  /* IE 6 doesn't support max-height
+  * we use height instead, but this forces the menu to always be this tall
+  */
+  * html .ui-autocomplete {
+    height: 100px;
+  }
+</style>
+
+<script type="text/javascript">
+  $(function() {
+      $( "#event_date" ).datepicker();
+      
+      
+      var availableTags = [
+	  "ActionScript",
+	  "AppleScript",
+	  "Asp",
+	  "BASIC",
+	  "C",
+	  "C++",
+	  "Clojure",
+	  "COBOL",
+	  "ColdFusion",
+	  "Erlang",
+	  "Fortran",
+	  "Groovy",
+	  "Haskell",
+	  "Java",
+	  "JavaScript",
+	  "Lisp",
+	  "Perl",
+	  "PHP",
+	  "Python",
+	  "Ruby",
+	  "Scala",
+	  "Scheme"
+      ];
+      
+      
+      function split( val ) {
+	  return val.split( /,\s*/ );
+      }
+      
+      function extractLast( term ) {
+	  return split( term ).pop();
+      }
+      
+      $( "#friend_invite" )
+      // don't navigate away from the field on tab when selecting an item
+	  .bind( "keydown", function( event ) {
+	      if ( event.keyCode === $.ui.keyCode.TAB &&
+		   $( this ).data( "autocomplete" ).menu.active ) {
+		  event.preventDefault();
+	      }
+	  })
+	  .autocomplete({
+	      minLength: 0,
+	      source: function( request, response ) {
+		  // delegate back to autocomplete, but extract the last term
+		  response( $.ui.autocomplete.filter(
+		      availableTags, extractLast( request.term ) ) );
+	      },
+	      focus: function() {
+		  // prevent value inserted on focus
+		  return false;
+	      },
+	      select: function( event, ui ) {
+		  var terms = split( this.value );
+		  // remove the current input
+		  terms.pop();
+		  // add the selected item
+		  terms.push( ui.item.value );
+		  // add placeholder to get the comma-and-space at the end
+		  terms.push( "" );
+		  this.value = terms.join( ", " );
+		  return false;
+	      }
+	  });
+      
+  });
+</script>
+
+{% endblock %}
+
+
+{% block content %}     
+
+
+<div class="span-4"> </div>
+<div class="span-14 last title">  {{ brew.name }}  </div>
+
+
+<div class="span-4"> </div>
+<div class="span-14 last desc">  {{ brew.description }} </div>
+
+<div class="span-18 last">  
+  <input type="text" name="event_date" id="event_date"/>
+</div>
+
+
+<table id="ingredient_table" class="box-table" width="700" align="center">
+  <tr> <th colspan=3 > <br/>  <h3 align="center"> Tasks that need doing </h3> <br/> </th> </tr>
+  <tr> <th>Name</th> <th>Description</th> <th> Take  Action </th> </tr>
+  {% for task in task_list %}
+  <tr>
+    <td> {{ task.name }} </td>
+    <td> {{ task.description }} </td>
+    <td>
+      <div class="span-4 last">
+	{% if task.assignee %}
+	<div style="float:left"> {{ task.assignee }} </div>
+	{% else %}
+	<div style="float:left"> 
+	  <form action="volunteer_for_task" method="POST">
+	    {% csrf_token %}
+	    <input type="hidden" name="event_id" value="{{ brew.ident }}"/>
+	    <input type="hidden" name="task_id" value="{{ task.ident }}"/>
+	    <input type="submit" value="Volunteer"/> 
+	  </form>
+	</div>
+	{% endif %}
+	
+	<div style="float:right">  
+	  <form action="delete_task" method="POST"> 
+	    {% csrf_token %}
+	    <input type="hidden" name="event_id" value="{{ brew.ident }}"/>
+	    <input type="hidden" name="task_id" value="{{ task.ident }}"/>
+	    <button type="submit" class="button negative" value="Delete">
+	      <img src="{{STATIC_URL}}css/blueprint/plugins/buttons/icons/cross.png" alt="Delete Task"/> 
+	    </button> 
+	  </form>
+	</div>
+      </div>
+    </td>
+  </tr>
+  {% endfor %}
+  
+  <form action="save_task" method="POST"> 
+    {% csrf_token %}
+    <input type="hidden" name="event_id" value="{{ brew.ident }}"/>
+    
+    <tr>
+      <td> <input type="text" name="name"/>  </td>
+      <td> <textarea rows="2" cols="40" name="description"></textarea> </td>
+      <td> <input type="submit" id="add_ingredient" value="Add a task"/> </td>
+    </tr>
+  </form>
+</table>
+
+<div class="span-18 last">
+  <h2>Invite friends</h2>
+  <form action="invite_friends" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="event_id" value="{{brew.ident}}"/>
+    <div class="span-12"> <input type="text" name="friend_invite"/> </div>
+    <div class="span-5"> <input type="submit" value="Invite"/>  </div>
+    <div class="span-1 last" > </div>
+  </form>
+</div>
+
+<br/>  <br/>  <br/>  <br/>  <br/>  <br/>
+
+{% if guest_list %}
+<div class="span-18 last"> <h2> People Attending </h2> </div>
+
+{% for guest in guest_list %}  
+<div class="span-4"> {{guest.picture}} <br/> {{guest.firstname }} {{guest.lastname }}</div>
+<div class="span-14 last">  {{guest.user.username}} </div>    
+{% endfor %}
+
+{% endif %}
+{% endblock %}

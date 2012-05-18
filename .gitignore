@@ -1,2 +1,8 @@
 *.db
 *.pyc
+templates/static/js/*
+templates/static/jqueryui/*
+templates/static/images/*
+templates/static/css/blueprint/*
+templates/static/css/ui-lightness/*
+

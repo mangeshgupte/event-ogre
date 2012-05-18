@@ -15,4 +15,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^polls/', include('polls.urls')),
+    url(r'^events/', include('events.urls')),
+    url(r'^accounts/', include('registration.backends.default.urls')),
+    url(r'', include('social_auth.urls')),
 )
