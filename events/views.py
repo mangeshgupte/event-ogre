@@ -308,4 +308,5 @@ def event_edit_profile(request):
         edit_form = EditProfileForm(user = request.user)
 
     payload = {'edit_form':edit_form, 'is_logged_in':True}
-    return render_to_response('events/editprofile.html', payload, RequestContext(request))
+    return render_to_response('events/editprofile.html', payload,
+                              context_instance=RequestContext(request))

@@ -1,6 +1,7 @@
 *.db
 *.pyc
-groups/static/js/*
+groups/static/*
+groups/static/qjs/*
 groups/static/jqueryui/*
 groups/static/images/*
 groups/static/css/blueprint/*

@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
-
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -17,5 +17,8 @@ urlpatterns = patterns('',
     url(r'^polls/', include('polls.urls')),
     url(r'^events/', include('events.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),
-    url(r'', include('social_auth.urls')),
+    #url(r'', include('social_auth.urls')),
 )
+
+urlpatterns += staticfiles_urlpatterns()
+
