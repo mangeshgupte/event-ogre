@@ -1,8 +1,8 @@
 *.db
 *.pyc
-templates/static/js/*
-templates/static/jqueryui/*
-templates/static/images/*
-templates/static/css/blueprint/*
-templates/static/css/ui-lightness/*
+groups/static/js/*
+groups/static/jqueryui/*
+groups/static/images/*
+groups/static/css/blueprint/*
+groups/static/css/ui-lightness/*
 registration
