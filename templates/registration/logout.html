@@ -1,5 +1,13 @@
 {% extends "registration/registration_base.html" %}
-{% block title %}Logged out{% endblock %}
+{% block title %}
+Logging out ...
+{% endblock title %}
+
+{% block head_extra %}
+<meta http-equiv="Refresh" 
+      content="0;url= {% url django.contrib.auth.views.login %}" />
+{% endblock head_extra %}
+
 {% block content %}
-Successfully logged out!
+Successfully logged out ! Redirecting back to main site ...
 {% endblock %}

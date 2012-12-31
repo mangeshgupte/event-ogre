@@ -1,5 +1,14 @@
 from django.db import models
 from django.contrib import auth
+from userena.models import UserenaBaseProfile
+
+class MyProfile(UserenaBaseProfile):
+    user = models.OneToOneField(auth.models.User,
+                                unique=True,
+                                verbose_name=('user'),
+                                related_name='my_profile')
+    favourite_snack = models.CharField(('favourite snack'),
+                                       max_length=5)
 
 class UserProfile(models.Model):
     """A User of the system"""

@@ -1,33 +1,41 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 
 {% block html_declare %} <html lang="en"> {% endblock %}
+
 <head>
-  <title>{% if is_logged_in %} {{ user }}{% else %}Please login{% endif %}</title>
-  <link rel="stylesheet" type="text/css" media="screen"  href="{{STATIC_URL}}css/socialauth.css" />
-  <link rel="stylesheet" type="text/css" media="screen, projection" href="{{STATIC_URL}}css/blueprint/screen.css" />
-  <link rel="stylesheet" type="text/css" media="print"  href="{{STATIC_URL}}css/blueprint/print.css"  />	
+  <title>{% if is_logged_in %} {{ user }}{% else %} Login {% endif %}  </title>
+  <link rel="stylesheet" type="text/css" media="screen"  
+        href="{{STATIC_URL}}css/socialauth.css" />
+  <link rel="stylesheet" type="text/css" media="screen, projection" 
+        href="{{STATIC_URL}}css/blueprint/screen.css" />
+  <link rel="stylesheet" type="text/css" media="print"  
+        href="{{STATIC_URL}}css/blueprint/print.css"  />	
   <!--[if lt IE 8]><link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
-  {% block extra_head %} {% endblock %}
+  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css" />
+  {% block extra_head %} {% endblock extra_head %}
 </head>
 
 <body>
   <div class="container">
-
-    {% if is_logged_in %}
     <div class="span-24 last heading_bar">
       <div class="span-6 prepend-3">
-	<a href="{% url events_userhome %}"> Home </a>      
+        {% if is_logged_in %}
+        <a href="{% url events_userhome %}"> Home </a>      
+        {% else %}
+        &nbsp;
+        {% endif %}
       </div>
-      <div class="span-6" align="center">
-	<h3>Event Brewery</h3>
+      <div class="span-6">
+        <h1> Event Brewery </h1> 
       </div>
       <div class="span-6 append-3 last" align="right">
-	<!--a href="{\% url events_edit_profile \%}"> Profile </a--> &nbsp; 
-	<!--a href="{\% url socialauth_editprofile \%}"> Socialauth Profile </a--> &nbsp; 
-	<a href="{\% url socialauth_disconnect \%}"> Logout </a>
+        <!--a href="{\% url events_edit_profile \%}"> Profile </a--> &nbsp; 
+        <!--a href="{\% url socialauth_editprofile \%}"> Socialauth Profile </a--> &nbsp; 
+        {% if is_logged_in %}
+        <a href="{% url auth_logout %}"> Logout </a>
+        {% endif %}
       </div>
     </div>
-    {% endif %}
     
     <div class="span-18 prepend-3 append-3">
       {% block extra_body %}   {% endblock %}
@@ -35,9 +43,7 @@
       {% block main_content %} {% endblock %}
       
       {% block content %}      {% endblock %}
-    </div>
-    
-    
+    </div>    
   </div> 
 </body>
 </html>

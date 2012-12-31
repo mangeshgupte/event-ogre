@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^polls/', include('polls.urls')),
     url(r'^events/', include('events.urls')),
+    #url(r'^accounts/', include('userena.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),
     #url(r'', include('social_auth.urls')),
 )

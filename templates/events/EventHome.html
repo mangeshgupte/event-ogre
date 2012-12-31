@@ -126,29 +126,29 @@
     <td> {{ task.description }} </td>
     <td>
       <div class="span-4 last">
-	{% if task.assignee %}
-	<div style="float:left"> {{ task.assignee }} </div>
-	{% else %}
-	<div style="float:left"> 
-	  <form action="volunteer_for_task" method="POST">
-	    {% csrf_token %}
-	    <input type="hidden" name="event_id" value="{{ brew.ident }}"/>
-	    <input type="hidden" name="task_id" value="{{ task.ident }}"/>
-	    <input type="submit" value="Volunteer"/> 
-	  </form>
-	</div>
-	{% endif %}
-	
-	<div style="float:right">  
-	  <form action="delete_task" method="POST"> 
-	    {% csrf_token %}
-	    <input type="hidden" name="event_id" value="{{ brew.ident }}"/>
-	    <input type="hidden" name="task_id" value="{{ task.ident }}"/>
-	    <button type="submit" class="button negative" value="Delete">
-	      <img src="{{STATIC_URL}}css/blueprint/plugins/buttons/icons/cross.png" alt="Delete Task"/> 
-	    </button> 
-	  </form>
-	</div>
+        {% if task.assignee %}
+        <div style="float:left"> {{ task.assignee }} </div>
+        {% else %}
+        <div style="float:left"> 
+          <form action="volunteer_for_task" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="event_id" value="{{ brew.ident }}"/>
+            <input type="hidden" name="task_id" value="{{ task.ident }}"/>
+            <input type="submit" class="rounded" value="Volunteer"/> 
+          </form>
+        </div>
+        {% endif %}
+        
+        <div style="float:right">  
+          <form action="delete_task" method="POST"> 
+            {% csrf_token %}
+            <input type="hidden" name="event_id" value="{{ brew.ident }}"/>
+            <input type="hidden" name="task_id" value="{{ task.ident }}"/>
+            <button type="submit" class="rounded centered" value="Delete">
+              <img src="{{STATIC_URL}}css/blueprint/plugins/buttons/icons/cross.png" alt="Delete Task"/> 
+            </button> 
+          </form>
+        </div>
       </div>
     </td>
   </tr>

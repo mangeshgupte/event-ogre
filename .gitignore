@@ -1,6 +1,5 @@
 *.db
 *.pyc
-groups/static/*
 groups/static/qjs/*
 groups/static/jqueryui/*
 groups/static/images/*

@@ -27,7 +27,7 @@ class brew_access_required(object):
         if request.method != "POST":
             return HttpResponseRedirect(reverse("events_userhome"))
     
-        event_id = request.POST.get("event_id")
+        event_id = request.POST.get("eid")
     
         user = request.user.get_profile()
         try:
@@ -49,16 +49,18 @@ class brew_access_required(object):
         self.f(*args)
         
         return HttpResponseRedirect(reverse("events.views.event",
-                                            args=(event_id,)))
+                                            args=(eid,)))
         
 @login_required
 def userhome(request):
     """ This is the default view that a user signing in will see."""
     print 'Inside userhome'
     user = request.user.get_profile()
-    #user = RequestContext(request)["user"].get_profile()
     host_list = [b.eid for b in Host.objects.filter(uid = user)]
     guest_list = [g.eid for g in Guest.objects.filter(uid = user)]
+    for event in guest_list:
+        print event
+        
     invitee_list = set([g.eid for g in Invitee.objects.filter(uid = user)])
     template_vars = {'user':user,
                      'host_list':host_list,
@@ -112,26 +114,27 @@ def join_event(request):
 
     yes = True if request.POST.get('join_brew_yes') != None else False
     no = True if request.POST.get('join_brew_no') != None else False
-    brew_id = request.POST.get("event_id")
+    event_id = request.POST.get("eid")
     #user = RequestContext(request)["user"].get_profile()
     user = request.user.get_profile()
     if yes:
         new_guest = Guest()
         new_guest.uid = user
         try:
-            new_guest.eid = Event.objects.get(pk=brew_id)
+            new_guest.eid = Event.objects.get(pk=event_id)
             invitee = Invitee.objects.get(eid=new_guest.eid, uid=user)
         except ObjectDoesNotExist:
-            print "Trying to join a brew to which you were not invited."
+            print "Trying to join a brew to which you were not invited ",
+            print request.POST
             return HttpResponseRedirect(reverse("events_userhome"))
         except MultipleObjectsReturned:
             print 'This is not supposed to happen. Problem with insertion'
             return HttpResponseRedirect(reverse("events_userhome"))
         new_guest.save()
         invitee.delete()
-        return HttpResponseRedirect(reverse("events.views.event", args=(brew_id,)))
+        return HttpResponseRedirect(reverse("events.views.event", args=(event_id,)))
     elif no:
-        invitee = Invitee.objects.get(eid=Event.objects.get(pk=brew_id), uid=user)
+        invitee = Invitee.objects.get(eid=Event.objects.get(pk=event_id), uid=user)
         invitee.delete()
         return HttpResponseRedirect(reverse("events_userhome"))
     else:
@@ -159,8 +162,8 @@ def event(request, event_id):
 @login_required
 @brew_access_required
 def save_task(request):
-    brew_id = request.POST.get("event_id")
-    brew_obj = Event.objects.get(pk=int(brew_id))
+    event_id = request.POST.get("eid")
+    brew_obj = Event.objects.get(pk=int(event_id))
 
     for i in range(len(request.POST.getlist('name'))):
         name = request.POST.getlist('name')[i]
@@ -222,11 +225,11 @@ def invite_friends(request):
     if request.method != "POST":
         return HttpResponseRedirect(reverse("events_userhome"))
     
-    if request.POST.get("friend_invite") == None or request.POST.get("event_id") == None:
+    if request.POST.get("friend_invite") == None or request.POST.get("eid") == None:
         print "problem", request.POST
         return HttpResponseRedirect(reverse("events_userhome"))
     
-    brew_id = request.POST.get("event_id")
+    event_id = request.POST.get("eid")
     friend_str = request.POST.get("friend_invite")
 
     user = request.user.get_profile()
@@ -236,7 +239,7 @@ def invite_friends(request):
         f = friend.strip()
 
         try:
-            current_brew = Event.objects.get(pk=brew_id)
+            current_brew = Event.objects.get(pk=event_id)
             invited_user = UserProfile.objects.get(user__username=f)
             
             guest_list = Guest.objects.filter(uid = invited_user, eid = current_brew)
@@ -247,21 +250,21 @@ def invite_friends(request):
                 print invited_user
                 new_invitee = Invitee()
                 new_invitee.uid = invited_user
-                new_invitee.eid = Event.objects.get(pk=brew_id)
+                new_invitee.eid = Event.objects.get(pk=event_id)
                 new_invitee.save()
             else:
                 print f, 'is already invited', guest_list, invitee_list, brewmaster_list
         except UserProfile.DoesNotExist:
             if '@' in f:
-                send_email_invite(f, user, brew_id)
+                send_email_invite(f, user, event_id)
             else:
                 print 'not found ',f
         
-    return HttpResponseRedirect(reverse("events.views.event", args=(brew_id,)))
+    return HttpResponseRedirect(reverse("events.views.event", args=(event_id,)))
     
             
-def send_email_invite(email_str, brewmaster, brew_id):
-    ''' Send an invitation to email_str from user. Invite to brew_id '''
+def send_email_invite(email_str, brewmaster, event_id):
+    ''' Send an invitation to email_str from user. Invite to event_id '''
     print 'Sending email to ', email_str
     
     from django.core.mail import send_mail
@@ -276,7 +279,7 @@ def send_email_invite(email_str, brewmaster, brew_id):
     # Email subject *must not* contain newlines
     subject = ''.join(subject.splitlines())
 
-    brew_obj = Event.objects.get(pk=int(brew_id))
+    brew_obj = Event.objects.get(pk=int(event_id))
     
     message = render_to_string('events/accept_invitation_email.txt',
                                { 'host': brewmaster,
