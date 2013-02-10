@@ -111,17 +111,20 @@ WSGI_APPLICATION = 'groups.wsgi.application'
 AUTH_PROFILE_MODULE = 'events.UserProfile'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    '/home/mangesh/proj/may06/gtd/templates'
-    )
+    '/home/mangesh/proj/may06/gtd/templates',
+)
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'social_auth.context_processors.social_auth_by_name_backends',
-    'social_auth.context_processors.social_auth_backends',
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.static',
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.request",
+    "django.contrib.messages.context_processors.messages",
+    
+    'allauth.account.context_processors.account',
+    'allauth.socialaccount.context_processors.socialaccount',
 )
 
 INSTALLED_APPS = (
@@ -134,45 +137,18 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
-    'polls',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+
     'events',
-    'registration',
-    'social_auth',
 )
 
-# One-week activation window; you may, of course, use a different value.
-ACCOUNT_ACTIVATION_DAYS = 7 
-REGISTRATION_OPEN = True
-
-# social_auth settings.
-AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.twitter.TwitterBackend',
-    'social_auth.backends.facebook.FacebookBackend',
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    'django.contrib.auth.backends.ModelBackend',
-)
-
-TWITTER_CONSUMER_KEY         = 'urODsq2KRIq6CuHIjxYMWQ'
-TWITTER_CONSUMER_SECRET      = 'gMpC0756kFid0ofV3pQc5szF9WpGwbHlsJnZOQJs'
-FACEBOOK_APP_ID              = ''
-FACEBOOK_API_SECRET          = ''
-LINKEDIN_CONSUMER_KEY        = ''
-LINKEDIN_CONSUMER_SECRET     = ''
-ORKUT_CONSUMER_KEY           = ''
-ORKUT_CONSUMER_SECRET        = ''
-GOOGLE_CONSUMER_KEY          = ''
-GOOGLE_CONSUMER_SECRET       = ''
-GOOGLE_OAUTH2_CLIENT_ID      = ''
-GOOGLE_OAUTH2_CLIENT_SECRET  = ''
-
-LOGIN_URL          = '/login-form/'
-LOGIN_REDIRECT_URL = '/logged-in/'
-LOGIN_ERROR_URL    = '/login-error/'
-
-SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
-SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
-
-SOCIAL_AUTH_DEFAULT_USERNAME = 'new_social_auth_user'
+#LOGIN_URL          = '/login-form/'
+#LOGIN_REDIRECT_URL = '/logged-in/'
+#LOGIN_ERROR_URL    = '/login-error/'
 
 # Set up gmail for the email account.
 EMAIL_HOST = 'smtp.gmail.com'

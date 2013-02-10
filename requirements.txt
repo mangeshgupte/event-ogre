@@ -1,0 +1,14 @@
+# Basic
+PIL
+South
+yolk
+nose
+pip
+
+# Events
+
+# django-allauth
+django>=1.4
+oauth2
+python-openid
+requests>=1.0.3
